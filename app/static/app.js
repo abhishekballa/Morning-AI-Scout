@@ -3,6 +3,44 @@
 const $ = (s) => document.querySelector(s);
 const state = { runs: [], current: null, copyTexts: [] };
 
+// On the public website (GitHub Pages) there's no local server: data comes from data/site.json
+// and rules are edited on GitHub instead.
+const STATIC = document.querySelector('meta[name="scout-mode"]')?.content === "static";
+let siteData = null;
+
+async function loadSite(force = false) {
+  if (!siteData || force) {
+    const res = await fetch("data/site.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("Couldn't load the reports.");
+    siteData = await res.json();
+  }
+  return siteData;
+}
+
+const encodePath = (p) => p.split("/").map(encodeURIComponent).join("/");
+const docxHref = (p) => (STATIC ? encodePath(p) : "/api/docx?path=" + encodeURIComponent(p));
+
+async function getRuns(force = false) {
+  return STATIC ? (await loadSite(force)).runs : (await api("/api/runs")).runs;
+}
+async function getReport(path) {
+  if (!STATIC) return (await api("/api/report?path=" + encodeURIComponent(path))).markdown;
+  const res = await fetch(encodePath(path), { cache: "no-store" });
+  if (!res.ok) throw new Error("Report not found.");
+  return res.text();
+}
+async function getRules() {
+  return STATIC ? (await loadSite()).rules : (await api("/api/memory")).rules;
+}
+async function getStatus() {
+  if (!STATIC) return api("/api/status");
+  const d = await loadSite();
+  const now = new Date(), next = new Date(now);
+  next.setUTCHours(2, 30, 0, 0); // 8:00 AM IST
+  if (next <= now) next.setUTCDate(next.getUTCDate() + 1);
+  return { routineUrl: d.routineUrl, repoUrl: d.repoUrl, nextRun: next.toISOString() };
+}
+
 // ---------- Helpers ----------
 
 async function api(path, body) {
@@ -191,7 +229,7 @@ function renderReport(run, md) {
   let html = `<div class="report-head"><div>
       <h2>${esc(niceDate(run.date, { weekday: "long", day: "numeric", month: "long", year: "numeric" }))}</h2>
       <div class="meta">Run ${run.run} · ${esc(run.name)}</div></div>
-      ${run.docx ? `<a class="btn" href="/api/docx?path=${encodeURIComponent(run.docx)}">
+      ${run.docx ? `<a class="btn" href="${esc(docxHref(run.docx))}" download>
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Word file</a>` : ""}</div>`;
 
@@ -246,8 +284,7 @@ async function openRun(path, { focus = false } = {}) {
   state.current = run;
   renderRunList();
   try {
-    const { markdown } = await api("/api/report?path=" + encodeURIComponent(run.path));
-    renderReport(run, markdown);
+    renderReport(run, await getReport(run.path));
     history.replaceState(null, "", "#" + encodeURIComponent(run.path));
     if (focus) $("#report").focus({ preventScroll: true });
     if (focus && window.matchMedia("(max-width: 760px)").matches) $("#report").scrollIntoView({ behavior: "smooth" });
@@ -256,8 +293,8 @@ async function openRun(path, { focus = false } = {}) {
   }
 }
 
-async function loadRuns(preferPath) {
-  const { runs } = await api("/api/runs");
+async function loadRuns(preferPath, force = false) {
+  const runs = await getRuns(force);
   state.runs = runs;
   const fromHash = decodeURIComponent(location.hash.slice(1));
   const path = [preferPath, fromHash].find((p) => p && runs.some((r) => r.path === p)) || (runs[0] && runs[0].path);
@@ -272,9 +309,9 @@ function renderRules(rules) {
   if (!rules.length) { ul.innerHTML = `<li class="none">No rules yet. Add your first one above.</li>`; return; }
   ul.innerHTML = rules.slice().reverse().map((r) => `
     <li><div class="rule-body"><span class="rule-date">${esc(niceDate(r.date, { day: "numeric", month: "short", year: "numeric" }))}</span>${esc(r.text)}</div>
-    <button class="icon-btn" type="button" data-del-date="${esc(r.date)}" data-del-text="${esc(r.text)}" aria-label="Delete rule: ${esc(r.text)}" title="Delete rule">
+    ${STATIC ? "" : `<button class="icon-btn" type="button" data-del-date="${esc(r.date)}" data-del-text="${esc(r.text)}" aria-label="Delete rule: ${esc(r.text)}" title="Delete rule">
       <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button></li>`).join("");
+    </button>`}</li>`).join("");
 }
 
 function gitMessage(g, verb) {
@@ -287,7 +324,7 @@ function gitMessage(g, verb) {
 
 async function loadStatus() {
   try {
-    const s = await api("/api/status");
+    const s = await getStatus();
     $("#runBtn").href = s.routineUrl;
     const next = new Date(s.nextRun);
     const now = new Date();
@@ -337,6 +374,17 @@ $("#feedbackForm").addEventListener("submit", async (e) => {
   const box = $("#feedback"), btn = $("#saveBtn");
   const text = box.value.trim();
   if (!text) { toast("Type your feedback first.", true); box.focus(); return; }
+  if (STATIC) {
+    // The website can't change files, so copy the rule and open memory.md on GitHub to paste it.
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+    const line = `- ${today}: ${text.replace(/\s+/g, " ")}`;
+    const repo = (siteData && siteData.repoUrl) || "https://github.com/abhishekballa/Morning-AI-Scout";
+    // Start the copy and open GitHub straight away, while the tap still counts (pop-up blockers).
+    if (navigator.clipboard) navigator.clipboard.writeText(line).catch(() => {});
+    window.open(`${repo}/edit/main/memory.md`, "_blank", "noopener");
+    toast("Rule copied. Paste it on a new line at the end of memory.md, then tap Commit changes.");
+    return;
+  }
   btn.disabled = true; btn.textContent = "Saving…";
   try {
     const res = await api("/api/memory", { text });
@@ -350,6 +398,15 @@ $("#feedbackForm").addEventListener("submit", async (e) => {
 $("#syncBtn").addEventListener("click", async () => {
   const btn = $("#syncBtn");
   btn.disabled = true;
+  if (STATIC) {
+    try {
+      await loadRuns(undefined, true);
+      renderRules(siteData.rules);
+      toast("Showing the latest reports.");
+    } catch (err) { toast(err.message, true); }
+    finally { btn.disabled = false; }
+    return;
+  }
   try {
     const res = await api("/api/sync", {});
     state.runs = res.runs;
@@ -362,7 +419,19 @@ $("#syncBtn").addEventListener("click", async () => {
 // ---------- Start ----------
 
 (async function start() {
+  if (STATIC) {
+    $("#syncBtn .label-long").textContent = "Refresh";
+    $("#syncBtn").title = "Check for new reports";
+    $("#syncBtn").setAttribute("aria-label", "Refresh reports");
+    $("#teachHint").innerHTML = "Rules live in <code>memory.md</code> on GitHub. Type your feedback, tap <strong>Add on GitHub</strong>, and paste the copied rule there. Tomorrow's 8 AM run will follow it.";
+    $("#saveBtn").textContent = "Add on GitHub";
+    loadSite().then((d) => {
+      const a = $("#editRules");
+      a.href = `${d.repoUrl}/edit/main/memory.md`;
+      a.hidden = false;
+    }).catch(() => {});
+  }
   loadStatus();
-  try { renderRules((await api("/api/memory")).rules); } catch (e) { toast(e.message, true); }
+  try { renderRules(await getRules()); } catch (e) { toast(e.message, true); }
   try { await loadRuns(); } catch (e) { $("#report").innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
 })();

@@ -5,5 +5,8 @@ __pycache__/
 # Personal Claude Code settings
 .claude/settings.local.json
 
+# Website build output (made by tools/build_site.py)
+_site/
+
 # Word lock files
 ~$*.docx

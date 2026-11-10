@@ -231,6 +231,7 @@ textarea {
 }
 .icon-btn:hover { border-color: var(--line); color: var(--paid); background: var(--paid-bg); }
 .rules .none { color: var(--muted); }
+.edit-rules { display: inline-block; margin-top: 10px; font-size: 13.5px; font-weight: 500; }
 
 /* Toast */
 .toast {

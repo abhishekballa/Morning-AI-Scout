@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
   <header class="topbar">
@@ -45,7 +45,7 @@
     <aside class="teach">
       <section class="panel">
         <h2>Teach the scout</h2>
-        <p class="hint">Your feedback becomes a dated rule in <code>memory.md</code> and is pushed to GitHub, so tomorrow's 8 AM run follows it.</p>
+        <p id="teachHint" class="hint">Your feedback becomes a dated rule in <code>memory.md</code> and is pushed to GitHub, so tomorrow's 8 AM run follows it.</p>
         <form id="feedbackForm">
           <label for="feedback" class="sr-only">Your feedback</label>
           <textarea id="feedback" rows="4" maxlength="400" placeholder="e.g. Always include at least one free AI video tool"></textarea>
@@ -58,11 +58,12 @@
       <section class="panel">
         <h2>Rules it follows <span id="ruleCount" class="count"></span></h2>
         <ul id="rules" class="rules"></ul>
+        <a id="editRules" class="edit-rules" target="_blank" rel="noopener" hidden>Edit rules on GitHub</a>
       </section>
     </aside>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
