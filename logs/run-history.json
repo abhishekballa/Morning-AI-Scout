@@ -1,0 +1,32 @@
+{
+  "runs": [
+    {
+      "date": "2026-11-10",
+      "run": 3,
+      "started": "2026-11-10T16:48:24Z",
+      "finished": "2026-11-10T16:50:16Z",
+      "status": "partial",
+      "pick": "పాత AI vs కొత్త Claude Fable 5.2: same prompt, shocking difference! (Free test)",
+      "report": "Daily AI news/AI News 2026-11-10/AI News 2026-11-10 (3).md",
+      "driveUrl": "https://docs.google.com/document/d/13Nik5R5VjrWPEtlumwN0G6XhJUoUZ07noKJDdO0Ol9M/edit",
+      "noteUsed": "",
+      "errors": [
+        "Product Hunt, VentureBeat, AI Weekly and Google's developer blog couldn't be opened (cloud network blocked)",
+        "Finds 2, 4 and 5 were carried over from earlier runs and not re-verified",
+        "Only 3 of 5 finds are confirmed free (the rule asks for 4)"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "run": 2,
+      "started": "",
+      "finished": "2026-11-10T13:28:53Z",
+      "status": "ok",
+      "pick": "Coding లేకుండా 2 Minutes లో మీ సొంత Map App! Google AI Studio Free Tool",
+      "report": "Daily AI news/AI News 2026-11-10/AI News 2026-11-10 (2).md",
+      "driveUrl": "https://docs.google.com/document/d/1ckj8wGnGTxia0jJSMBLYQhl22PvxdBdoFlG3EGU0_PI/edit",
+      "noteUsed": "",
+      "errors": []
+    }
+  ]
+}

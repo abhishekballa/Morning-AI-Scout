@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history, so the site can show when the last report arrived
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"

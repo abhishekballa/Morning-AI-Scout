@@ -1,15 +1,16 @@
 ---
 name: daily-scout
-description: The morning run for Morning AI Scout. Finds the best AI tools and AI news from the last 24 hours, picks one video idea for Abhi's Telugu AI-tools channel, writes 3 hooks and a 5-point outline, and saves it as a .md and a .docx in "Daily AI news/AI News YYYY-MM-DD/", plus a Google Doc in the same folders on Google Drive. Use when asked to run the scout, do the morning run, or find today's video idea.
+description: The morning run for Morning AI Scout. Finds the best AI tools and AI news from the last 24 hours, picks one video idea for Abhi's Telugu AI-tools channel, writes 3 hooks and a 5-point outline, and saves it as a .md and a .docx in "Daily AI news/AI News YYYY-MM-DD/", plus a Google Doc in the same folders on Google Drive, then logs the run and pushes to GitHub. Use when asked to run the scout, do the morning run, or find today's video idea.
 ---
 
 # Daily Scout: the morning run
 
-Follow these 7 steps in order. Don't skip any.
+Follow these 9 steps in order. Don't skip any. Write down the time you start (UTC) for the run log in Step 8.
 
-## Step 1: Read memory.md
+## Step 1: Read memory.md and inbox.md
 - Open `memory.md` in the project folder and read every rule in it.
 - Follow those rules for the whole run. If a rule here and a rule in memory.md disagree, **memory.md wins**.
+- Open `inbox.md`. Anything written under its heading (ignore the `<!-- -->` comment) is a **one-time note from Abhi for this run only**, for example "focus on AI video tools today". Follow it for this run. If it clashes with memory.md, follow the note this time. If the file is missing or has no note, carry on.
 
 ## Step 2: Search the web (last 24 hours only)
 Look for new **AI tools** and **AI news** from these sources:
@@ -105,4 +106,32 @@ Use the Google Drive tools. Keep the same folder names as on the computer.
 
 If the Drive tools aren't connected, finish the local files anyway and tell Abhi the upload was skipped.
 
-When you're done, tell Abhi which video idea you picked, where the two local files are, and give the link to the Google Doc.
+## Step 8: Write the run log
+The dashboard reads `logs/run-history.json` to show the last run time and any errors. Add one entry for this run to the **start** of its `runs` list (create the file as `{"runs": []}` if it's missing). Keep the JSON valid.
+
+```json
+{
+  "date": "YYYY-MM-DD",
+  "run": 1,
+  "started": "2026-11-11T02:37:30Z",
+  "finished": "2026-11-11T02:40:12Z",
+  "status": "ok",
+  "pick": "today's video title",
+  "report": "Daily AI news/AI News YYYY-MM-DD/AI News YYYY-MM-DD.md",
+  "driveUrl": "link to the Google Doc, or empty",
+  "noteUsed": "the inbox.md note you followed, or empty",
+  "errors": []
+}
+```
+
+- `run` is 1 for the plain file, 2 for "(2)", and so on.
+- `started` and `finished` are UTC times. Get them with `date -u +%Y-%m-%dT%H:%M:%SZ`.
+- `status` is `"ok"` if everything worked, `"partial"` if the report was saved but something went wrong, or `"failed"` if no report was saved.
+- `errors` lists every problem in one plain sentence each, for example "Product Hunt couldn't be opened (network blocked)", "Drive upload skipped: Drive tools not connected" or "Only 3 of 5 finds are free".
+
+**Then clear the note:** if `inbox.md` had a note, put the file back to just its heading and comment, so the note isn't used twice.
+
+## Step 9: Save to GitHub
+Commit everything you changed (the report folder, `logs/run-history.json` and `inbox.md`) with the message `Morning scout: YYYY-MM-DD`, and push to `main`. If pushing to `main` is refused, push to a branch named `scout/YYYY-MM-DD` and add that to the run log's errors.
+
+When you're done, tell Abhi which video idea you picked, where the two local files are, the link to the Google Doc, and any errors.

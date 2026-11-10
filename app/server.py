@@ -21,11 +21,18 @@ from urllib.parse import parse_qs, urlparse
 ROOT = Path(__file__).resolve().parent.parent
 NEWS = ROOT / "Daily AI news"
 MEMORY = ROOT / "memory.md"
+INBOX = ROOT / "inbox.md"
+RUN_LOG = ROOT / "logs" / "run-history.json"
+INBOX_HEADER = ("# Note for the next run\n\n"
+                "<!-- One-time instruction for the next morning run. "
+                "The scout reads it, follows it, then clears this file. -->\n")
 STATIC = Path(__file__).resolve().parent / "static"
 HOST, PORT = "127.0.0.1", 8765
 IST = timezone(timedelta(hours=5, minutes=30))
 ROUTINE_URL = "https://claude.ai/code/routines/trig_01Eiws89eAndkFzgG8GaZQuJ"
 REPO_URL = "https://github.com/abhishekballa/Morning-AI-Scout"
+SITE_URL = "https://abhishekballa.github.io/Morning-AI-Scout/"
+DRIVE_URL = "https://drive.google.com/drive/folders/1dJWK80Bz95WXbXOa-_Xf0effJCe5XqNR"
 
 RULE_RE = re.compile(r"^- (\d{4}-\d{2}-\d{2}): (.+)$")
 DAY_RE = re.compile(r"AI News (\d{4}-\d{2}-\d{2})")
@@ -69,12 +76,12 @@ def has_remote():
     return ok and "origin" in out.split()
 
 
-def save_memory_to_git(message):
-    """Commit memory.md and push it, so the cloud run uses the new rules tomorrow."""
-    ok, out = git("add", "memory.md")
+def commit_and_push(filename, message):
+    """Commit one file and push it, so the cloud run sees the change next morning."""
+    ok, out = git("add", filename)
     if not ok:
         return {"saved": False, "pushed": False, "detail": out}
-    ok, out = git("commit", "-m", message, "--", "memory.md")
+    ok, out = git("commit", "-m", message, "--", filename)
     if not ok:
         return {"saved": False, "pushed": False, "detail": out}
     if not has_remote():
@@ -159,7 +166,7 @@ def add_rule(text):
             content += "\n"
         content += f"- {today}: {text}\n"
         MEMORY.write_text(content, encoding="utf-8")
-        result = save_memory_to_git(f"Feedback: {text[:60]}")
+        result = commit_and_push("memory.md", f"Feedback: {text[:60]}")
     return 200, {"rules": read_memory(), "git": result}
 
 
@@ -176,8 +183,59 @@ def delete_rule(date, text):
         else:
             return 404, {"error": "That rule wasn't found. Refresh and try again."}
         MEMORY.write_text("".join(lines), encoding="utf-8")
-        result = save_memory_to_git(f"Remove rule: {text[:60]}")
+        result = commit_and_push("memory.md", f"Remove rule: {text[:60]}")
     return 200, {"rules": read_memory(), "git": result}
+
+
+# ---------- Note for the next run (inbox.md) ----------
+
+def read_inbox():
+    if not INBOX.exists():
+        return ""
+    text = re.sub(r"<!--.*?-->", "", INBOX.read_text(encoding="utf-8"), flags=re.S)
+    return "\n".join(l for l in text.splitlines() if not l.startswith("# ")).strip()
+
+
+def set_inbox(text):
+    text = "\n".join(line.rstrip() for line in str(text).strip().splitlines()).strip()
+    if len(text) > 1000:
+        return 400, {"error": "Please keep the note under 1,000 characters."}
+    with git_lock:
+        if has_remote():
+            git("pull", "--ff-only")
+        INBOX.write_text(INBOX_HEADER + (f"\n{text}\n" if text else ""), encoding="utf-8")
+        msg = f"Note for next run: {text.splitlines()[0][:60]}" if text else "Clear the note for the next run"
+        result = commit_and_push("inbox.md", msg)
+    return 200, {"inbox": read_inbox(), "git": result}
+
+
+# ---------- Run log ----------
+
+def read_run_log():
+    try:
+        runs = json.loads(RUN_LOG.read_text(encoding="utf-8")).get("runs", [])
+    except (OSError, ValueError, AttributeError):
+        return []
+    runs = [r for r in runs if isinstance(r, dict)]
+    runs.sort(key=lambda r: str(r.get("finished") or r.get("started") or ""), reverse=True)
+    return runs[:30]
+
+
+def last_report_commit():
+    ok, out = git("log", "-1", "--format=%cI", "--", "Daily AI news")
+    return out.strip() if ok else ""
+
+
+def dashboard():
+    return {
+        "log": read_run_log(),
+        "inbox": read_inbox(),
+        "lastReportCommit": last_report_commit(),
+        "routineUrl": ROUTINE_URL,
+        "repoUrl": REPO_URL,
+        "siteUrl": SITE_URL,
+        "driveUrl": DRIVE_URL,
+    }
 
 
 # ---------- Status ----------
@@ -266,6 +324,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, {"rules": read_memory()})
         if url.path == "/api/status":
             return self._send(200, status())
+        if url.path == "/api/dashboard":
+            return self._send(200, dashboard())
         return self._send(404, {"error": "Not found"})
 
     def do_POST(self):
@@ -283,6 +343,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(*add_rule(body.get("text", "")))
         if path == "/api/memory/delete":
             return self._send(*delete_rule(str(body.get("date", "")), str(body.get("text", ""))))
+        if path == "/api/inbox":
+            return self._send(*set_inbox(body.get("text", "")))
         if path == "/api/sync":
             return self._send(*sync())
         return self._send(404, {"error": "Not found"})

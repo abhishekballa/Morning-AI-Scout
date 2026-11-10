@@ -21,8 +21,8 @@
       </div>
     </div>
     <div class="actions">
-      <button id="syncBtn" class="btn" type="button" title="Download the newest reports from GitHub" aria-label="Get latest reports">
-        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <button id="syncBtn" class="btn" type="button" title="Get the newest reports from GitHub" aria-label="Get latest reports">
+        <svg class="refresh-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16m0 4v-4h-4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="label-long">Get latest</span>
       </button>
       <a id="runBtn" class="btn primary" target="_blank" rel="noopener" title="Opens the routine on claude.ai, where you can press Run now">
@@ -38,23 +38,47 @@
       <div id="runList" class="run-list"></div>
     </nav>
 
-    <main id="report" class="report" tabindex="-1">
-      <div class="empty">Loading reports…</div>
+    <main class="main">
+      <section id="dash" class="dash" aria-label="Dashboard"></section>
+      <div id="report" class="report" tabindex="-1">
+        <div class="empty">Loading reports…</div>
+      </div>
     </main>
 
     <aside class="teach">
-      <section class="panel">
-        <h2>Teach the scout</h2>
-        <p id="teachHint" class="hint">Your feedback becomes a dated rule in <code>memory.md</code> and is pushed to GitHub, so tomorrow's 8 AM run follows it.</p>
-        <form id="feedbackForm">
-          <label for="feedback" class="sr-only">Your feedback</label>
-          <textarea id="feedback" rows="4" maxlength="400" placeholder="e.g. Always include at least one free AI video tool"></textarea>
-          <div class="form-row">
-            <span id="charCount" class="muted small">0 / 400</span>
-            <button id="saveBtn" class="btn primary" type="submit">Save rule</button>
-          </div>
-        </form>
+      <section class="panel talk">
+        <h2>Talk to the agent</h2>
+        <div class="tabs" role="tablist" aria-label="Ways to talk to the agent">
+          <button class="tab" role="tab" id="tabNote" aria-controls="panelNote" aria-selected="true" type="button">Note for next run</button>
+          <button class="tab" role="tab" id="tabRule" aria-controls="panelRule" aria-selected="false" type="button">Add a rule</button>
+        </div>
+
+        <div id="panelNote" role="tabpanel" aria-labelledby="tabNote">
+          <p id="noteHint" class="hint">A one-time instruction. The scout follows it on the next run, then clears it.</p>
+          <div id="pendingNote" class="pending" hidden></div>
+          <form id="noteForm">
+            <label for="noteText" class="sr-only">Note for the next run</label>
+            <textarea id="noteText" rows="3" maxlength="1000" placeholder="e.g. Tomorrow, focus on free AI video tools"></textarea>
+            <div class="form-row">
+              <span id="noteCount" class="muted small">0 / 1000</span>
+              <button id="noteBtn" class="btn primary" type="submit">Send note</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="panelRule" role="tabpanel" aria-labelledby="tabRule" hidden>
+          <p id="teachHint" class="hint">A permanent rule. It's saved in <code>memory.md</code> and pushed to GitHub, and every run from now on follows it.</p>
+          <form id="feedbackForm">
+            <label for="feedback" class="sr-only">Your rule</label>
+            <textarea id="feedback" rows="3" maxlength="400" placeholder="e.g. Always include at least one free AI video tool"></textarea>
+            <div class="form-row">
+              <span id="charCount" class="muted small">0 / 400</span>
+              <button id="saveBtn" class="btn primary" type="submit">Save rule</button>
+            </div>
+          </form>
+        </div>
       </section>
+
       <section class="panel">
         <h2>Rules it follows <span id="ruleCount" class="count"></span></h2>
         <ul id="rules" class="rules"></ul>

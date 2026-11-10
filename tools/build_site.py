@@ -41,8 +41,7 @@ def main():
     site = {
         "runs": runs,
         "rules": server.read_memory(),
-        "routineUrl": server.ROUTINE_URL,
-        "repoUrl": server.REPO_URL,
+        **server.dashboard(),
         "builtAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
     (OUT / "data" / "site.json").write_text(json.dumps(site, ensure_ascii=False, indent=1), encoding="utf-8")
