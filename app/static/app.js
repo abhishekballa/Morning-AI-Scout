@@ -188,9 +188,13 @@ function renderFinds(sec) {
     else t = t.replace(/^:\s*/, "");
     const nameHtml = url && /^https?:\/\//.test(url)
       ? `<a href="${esc(url)}" target="_blank" rel="noopener">${inline(name)}</a>` : inline(name || "Find " + (i + 1));
+    // "Free, no credit card; not re-verified" -> badge "Free" + small note "No credit card · Not re-verified"
+    const [label, ...extra] = price.split(/[,;]/).map((s) => s.trim()).filter(Boolean);
+    const note = extra.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(" · ");
     html += `<article class="card find">
-      <div class="find-head"><span class="find-rank">#${i + 1}</span>${price ? `<span class="badge ${priceClass(price)}">${esc(price)}</span>` : ""}</div>
+      <div class="find-head"><span class="find-rank">#${i + 1}</span>${label ? `<span class="badge ${priceClass(price)}">${esc(label)}</span>` : ""}</div>
       <div class="find-name">${nameHtml}</div>
+      ${note ? `<div class="find-note">${esc(note)}</div>` : ""}
       <p>${inline(t)}</p></article>`;
   });
   return html + "</div>";
