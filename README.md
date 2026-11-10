@@ -13,7 +13,15 @@ A Claude Code agent that runs every morning at 8:00 AM IST. It finds the best fr
 | `tools/md_to_docx.py` | Turns a report into a Word file |
 | `app/` | The Scout app (see below) |
 
-## The Scout app
+## The website (open it anywhere)
+
+**https://abhishekballa.github.io/Morning-AI-Scout/**
+
+A read-only version of the Scout app that works on any phone or computer. It rebuilds itself every time a new report is pushed, including the daily 8 AM run. To add a rule from the website, tap **Add on GitHub**: it copies the rule and opens `memory.md` on GitHub, where you paste it and commit.
+
+Anyone with the link can see it, because the repo and the website are public.
+
+## The Scout app (on your computer)
 
 A clean local page to read the reports and teach the agent.
 
