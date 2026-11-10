@@ -1,0 +1,9 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Personal Claude Code settings
+.claude/settings.local.json
+
+# Word lock files
+~$*.docx
