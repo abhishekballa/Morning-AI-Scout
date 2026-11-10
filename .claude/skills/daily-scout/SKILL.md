@@ -5,7 +5,7 @@ description: The morning run for Morning AI Scout. Finds the best AI tools and A
 
 # Daily Scout: the morning run
 
-Follow these 9 steps in order. Don't skip any. Write down the time you start (UTC) for the run log in Step 8.
+Follow these 10 steps in order. Don't skip any. Write down the time you start (UTC) for the run log in Step 8.
 
 ## Step 1: Read memory.md and inbox.md
 - Open `memory.md` in the project folder and read every rule in it.
@@ -120,6 +120,7 @@ The dashboard reads `logs/run-history.json` to show the last run time and any er
   "report": "Daily AI news/AI News YYYY-MM-DD/AI News YYYY-MM-DD.md",
   "driveUrl": "link to the Google Doc, or empty",
   "noteUsed": "the inbox.md note you followed, or empty",
+  "emailSent": true,
   "errors": []
 }
 ```
@@ -131,7 +132,22 @@ The dashboard reads `logs/run-history.json` to show the last run time and any er
 
 **Then clear the note:** if `inbox.md` had a note, put the file back to just its heading and comment, so the note isn't used twice.
 
-## Step 9: Save to GitHub
+## Step 9: Send the email
+Only if the report was saved (status `"ok"` or `"partial"`) **and** the instructions that started this run give an email address. The address is never stored in this repo, because the repo is public. Don't write it into any file.
+
+Send it with the Gmail tools:
+- **To:** the address from the instructions.
+- **Subject:** `Morning AI Scout: <today's video title>`
+- **Body** (plain text, short):
+  1. Today's pick and the "why this one" line.
+  2. The 3 hooks.
+  3. The top 5 finds, one line each with the price label.
+  4. Any errors or warnings from the run log, or "No problems today".
+  5. Links: the dashboard `https://abhishekballa.github.io/Morning-AI-Scout/`, the report on GitHub (`https://github.com/abhishekballa/Morning-AI-Scout/blob/main/` + the report path, with spaces as `%20`), and the Google Doc.
+
+Set `emailSent` in the run log entry to `true` if it sent, or `false` if you skipped it. If sending failed, set it to `false` and add the reason to `errors` (and change `status` from `"ok"` to `"partial"`).
+
+## Step 10: Save to GitHub
 Commit everything you changed (the report folder, `logs/run-history.json` and `inbox.md`) with the message `Morning scout: YYYY-MM-DD`, and push to `main`. If pushing to `main` is refused, push to a branch named `scout/YYYY-MM-DD` and add that to the run log's errors.
 
 When you're done, tell Abhi which video idea you picked, where the two local files are, the link to the Google Doc, and any errors.
