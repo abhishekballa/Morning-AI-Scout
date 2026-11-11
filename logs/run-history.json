@@ -1,6 +1,23 @@
 {
   "runs": [
     {
+      "date": "2026-11-11",
+      "run": 1,
+      "started": "2026-11-11T02:38:13Z",
+      "finished": "2026-11-11T02:39:30Z",
+      "status": "partial",
+      "pick": "మీ AI coding agent ని 2019 నుండి 2026 కి upgrade చేయండి: Modern Web Guidance (Free!)",
+      "report": "Daily AI news/AI News 2026-11-11/AI News 2026-11-11.md",
+      "driveUrl": "https://docs.google.com/document/d/1RLQr_ilhZHypLwZDeSOWSh27PWtwyUdM-p2dmE9obQw/edit",
+      "noteUsed": "Focus on AI agents",
+      "emailSent": true,
+      "errors": [
+        "Product Hunt, Reddit and X couldn't be checked (no access from the cloud run)",
+        "Only 2 of 5 finds are fresh (last 24 hours) and free to try; Spacefast (Nov 9) and Meta Spaces (about Nov 6) are older than 24 hours and included as agent context",
+        "Only 3 of 5 finds are free to try (the rule asks for 4): AlphaProof Code is research only and the Google Cloud stack is for developers"
+      ]
+    },
+    {
       "date": "2026-11-10",
       "run": 5,
       "started": "2026-11-10T18:15:33Z",
