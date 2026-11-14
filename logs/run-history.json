@@ -1,6 +1,22 @@
 {
   "runs": [
     {
+      "date": "2026-11-14",
+      "run": 1,
+      "started": "2026-11-14T02:41:25Z",
+      "finished": "2026-11-14T02:42:44Z",
+      "status": "partial",
+      "pick": "మీ PC లో ఫ్రీ ChatGPT-లాంటి AI! Qwen3.8 ని Internet, subscription లేకుండా run చేయండి (Unsloth Desktop)",
+      "report": "Daily AI news/AI News 2026-11-14/AI News 2026-11-14.md",
+      "driveUrl": "https://docs.google.com/document/d/1a4YXlTKAgZYoJ8Elb-xtkMd2TSpBd-R6-8l4gGPERJc/edit",
+      "noteUsed": "",
+      "emailSent": true,
+      "errors": [
+        "Product Hunt, Reddit, X and company blogs weren't read directly from the cloud session; finds came from Hacker News and linked pages",
+        "Only 3 of 5 finds are free for beginners (the rule asks for 4); DeepSeek V4 Pro free chat limits unconfirmed"
+      ]
+    },
+    {
       "date": "2026-11-13",
       "run": 1,
       "started": "2026-11-13T02:41:32Z",
