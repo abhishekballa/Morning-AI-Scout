@@ -1,6 +1,23 @@
 {
   "runs": [
     {
+      "date": "2026-11-15",
+      "run": 1,
+      "started": "2026-11-15T02:41:29Z",
+      "finished": "2026-11-15T02:43:02Z",
+      "status": "partial",
+      "pick": "ఫ్రీ Loom alternative! CaptureFlow తో AI captions, summary తో screen recording చేయండి",
+      "report": "Daily AI news/AI News 2026-11-15/AI News 2026-11-15.md",
+      "driveUrl": "https://docs.google.com/document/d/1wnuhZDoN1N1ZedtBXgi1PJVJqvyx3q-Og8-uf4eltzU/edit",
+      "noteUsed": "",
+      "emailSent": true,
+      "errors": [
+        "Reddit, X, OpenAI blog and Blender site couldn't be opened from the cloud session (blocked or 403); Product Hunt and Hacker News were used instead",
+        "Only 2 of 5 finds are clearly free (the rule asks for 4): few new free tools surfaced in the last 24 hours; Kokonut UI pricing unconfirmed",
+        "Anthropic blog showed no new posts for Nov 13-14"
+      ]
+    },
+    {
       "date": "2026-11-14",
       "run": 1,
       "started": "2026-11-14T02:41:25Z",
