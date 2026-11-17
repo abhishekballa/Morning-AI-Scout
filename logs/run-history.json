@@ -1,6 +1,23 @@
 {
   "runs": [
     {
+      "date": "2026-11-17",
+      "run": 1,
+      "started": "2026-11-17T02:41:02Z",
+      "finished": "2026-11-17T02:42:23Z",
+      "status": "partial",
+      "pick": "మీటింగ్ నుండి PPT 2 నిమిషాల్లో! Zoom Slides AI తో Free గా try చేద్దాం",
+      "report": "Daily AI news/AI News 2026-11-17/AI News 2026-11-17.md",
+      "driveUrl": "https://docs.google.com/document/d/14oxla3MHu75t6HvYXY9gtnLrE0u-5RERcdR_NQXwXuo/edit",
+      "noteUsed": "",
+      "emailSent": true,
+      "errors": [
+        "Only 2 of 5 finds are confirmed free (the rule asks for 4); Zoom Slides free AI limits, ChatGPT Wallet and Cal.com v7 pricing are unconfirmed",
+        "Reddit, X and company blogs were not checked directly; the search tool found few dated items from the last 24 hours",
+        "readywhen and the Qwen blog pages loaded without content"
+      ]
+    },
+    {
       "date": "2026-11-16",
       "run": 1,
       "started": "2026-11-16T02:41:39Z",
