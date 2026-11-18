@@ -1,6 +1,23 @@
 {
   "runs": [
     {
+      "date": "2026-11-18",
+      "run": 1,
+      "started": "2026-11-18T02:41:16Z",
+      "finished": "2026-11-18T02:42:35Z",
+      "status": "partial",
+      "pick": "2 నిమిషాల్లో మీ YouTube Link in Bio page! Link.bio AI తో Free గా (No coding)",
+      "report": "Daily AI news/AI News 2026-11-18/AI News 2026-11-18.md",
+      "driveUrl": "https://docs.google.com/document/d/1bKScdFQh6c2qTPoIraCVZFS4Ebu5CZN1FreVNuLta4w/edit",
+      "noteUsed": "",
+      "emailSent": true,
+      "errors": [
+        "OpenAI's GPT-6.2 page returned 403 and the Product Hunt page for Creatify Max returned 404, so those were not verified",
+        "Reddit, X and most company blogs were not checked directly; the search tool found few dated items from the last 24 hours",
+        "Free plan limits for Link.bio and Ridian are unconfirmed; only 2 of 5 finds are fully confirmed free"
+      ]
+    },
+    {
       "date": "2026-11-17",
       "run": 1,
       "started": "2026-11-17T02:41:02Z",
